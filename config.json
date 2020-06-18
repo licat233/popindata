@@ -1,0 +1,21 @@
+{
+  "popin_account": "Self_White",
+  "popin_password": "Self_White_...",
+  "popin_CampaignList": [
+    "5e8194aa0fc10c7cf63e1855"
+  ],
+  "popin_cookie": "piuid=6cb534ff9314e358468611649169755b; PHPSESSID=2oeusfiu2bjlf5qiupersmvv50; __stripe_mid=9c809d28-5a56-4acb-8f02-65dfa1951558; autoLoginEnable=true; __zlcmid=ydjCPWabA9zH5K; uid=e7b9c65a566b6df61fb1591985172659; __stripe_sid=9088f2c2-13ee-4ee3-a701-4527c1b1c12a; ticket=94c85e7803; laravel_session=eyJpdiI6ImlUXC80RE5sSzBmZUZwUkc3REZUU29nPT0iLCJ2YWx1ZSI6ImRhVUVUQkRJTTdlTXRvblVvbFdpbkIxN0xXeVJUelVzZTJTVmJrNmNwSkZpdWhtK1pSRnpxTSs3RmJjQzV2TWEiLCJtYWMiOiI2OGIxOTNiMTQzMmM3MzFjNzIzNGY3MGE4NjhhODk5NjUxNjdjNDg4YzQzZGMzMGRkMzMzNjA5ZjdkZTZkZmZjIn0%3D",
+
+  "mysql_addr": "localhost:3306",
+  "mysql_account": "root",
+  "mysql_password": "root",
+  "mysql_dbname": "popin",
+  "mysql_tbname": "quban",
+
+  "pg_host": "localhost",
+  "pg_port":"5432",
+  "pg_user": "root",
+  "pg_password": "root",
+  "pg_dbname": "popin",
+  "pg_tbname": "quban"
+}
