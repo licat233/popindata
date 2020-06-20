@@ -19,25 +19,26 @@ type popinJSONObj struct {
 
 //POP POPin的相关信息
 type POP struct {
-	Account      string `json:"popin_account"`
-	Password     string `json:"popin_password"`
+	Account      string   `json:"popin_account"`
+	Password     string   `json:"popin_password"`
 	CampaignList []string `json:"popin_CampaignList"`
-	Cookie   string `json:"popin_cookie"`
+	Cookie       string   `json:"popin_cookie"`
 }
 
+//Popin 实例化一个POP对象
 var Popin POP
 
-func init(){
+func init() {
 	var file *os.File
 	var err error
 	var configByte []byte
-	if file, err = os.Open("config.json");err != nil {
+	if file, err = os.Open("config.json"); err != nil {
 		log.Fatal(err)
 	}
-	if configByte,err = ioutil.ReadAll(file);err != nil {
+	if configByte, err = ioutil.ReadAll(file); err != nil {
 		log.Fatal(err)
 	}
-	if err = json.Unmarshal(configByte,&Popin);err != nil {
+	if err = json.Unmarshal(configByte, &Popin); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -45,14 +46,14 @@ func init(){
 //GetAllMoney 获取popin指定campaign的总消耗,最常用的
 func (pop *POP) GetAllMoney() (money int) {
 	for _, v := range pop.CampaignList {
-		j := getPopinMoney(pop.Cookie,pop.Account, v)
+		j := getPopinMoney(pop.Cookie, pop.Account, v)
 		money += j
 	}
 	return
 }
 
 //GetPopinMoney 爬取所需要的数据（消耗额）,核心函数,不要手贱的去"优化"
-func getPopinMoney(popcookie,account,campaign string) int {
+func getPopinMoney(popcookie, account, campaign string) int {
 	campaignurl := "https://dashboard.popin.cc/discovery/accounts-tw/index.php/" + account + "/c/" + campaign + "/getDiscoveryReports"
 	referer := "https://dashboard.popin.cc/discovery/accounts-tw/index.php/" + account + "/manageAgency?subPage=/" + account + "/campaigns/listCampaign"
 
@@ -79,7 +80,7 @@ func getPopinMoney(popcookie,account,campaign string) int {
 	//发送请求数据之服务器，并获取响应数据
 	resp, err = client.Do(req)
 	if err != nil {
-		fmt.Println("Client Do Failed:",err)
+		fmt.Println("Client Do Failed:", err)
 		return 0
 	}
 	if resp.StatusCode != 200 {

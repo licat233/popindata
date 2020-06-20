@@ -1,4 +1,4 @@
-package mysqlDB
+package mysqldb
 
 import (
 	"database/sql"
@@ -10,48 +10,54 @@ import (
 	"popindata/function"
 	"strconv"
 	"time"
-)
-import _ "github.com/go-sql-driver/mysql"
 
+	//数据库驱动
+	_ "github.com/go-sql-driver/mysql"
+)
+
+//SQL 数据库结构体
 type SQL struct {
-	Addr string `json:"mysql_addr"`
-	Account string `json:"mysql_account"`
+	Addr     string `json:"mysql_addr"`
+	Account  string `json:"mysql_account"`
 	Password string `json:"mysql_password"`
-	DBname string `json:"mysql_dbname"`
-	TBname string `json:"mysql_tbname"`
-	Conn *sql.DB
+	DBname   string `json:"mysql_dbname"`
+	TBname   string `json:"mysql_tbname"`
+	Conn     *sql.DB
 }
 
+//Mysql 数据库对象
 var Mysql SQL
 var err error
 
-func init(){
+func init() {
 	var file *os.File
 	var configByte []byte
-	if file, err = os.Open("config.json");err != nil {
+	if file, err = os.Open("config.json"); err != nil {
 		log.Fatal(err)
 	}
-	if configByte,err = ioutil.ReadAll(file);err != nil {
+	if configByte, err = ioutil.ReadAll(file); err != nil {
 		log.Fatal(err)
 	}
-	if err = json.Unmarshal(configByte,&Mysql);err != nil {
+	if err = json.Unmarshal(configByte, &Mysql); err != nil {
 		log.Fatal(err)
 	}
 	Mysql.Conn, err = sql.Open("mysql", Mysql.Account+":"+Mysql.Password+"@tcp("+Mysql.Addr+")/"+Mysql.DBname)
 	if err != nil {
 		panic(err.Error())
+	} else {
+		fmt.Printf("已连接至数据库：%s", Mysql.Addr)
 	}
 
-	stmtIns,err := Mysql.Conn.Query("CREATE TABLE IF NOT EXISTS `"+Mysql.DBname+"`.`"+Mysql.TBname+"` ( `id` INT NOT NULL AUTO_INCREMENT ,`total_charge` INT(64) NOT NULL , `today_charge` INT(64) NOT NULL, `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;")
-	if err !=nil {
+	stmtIns, err := Mysql.Conn.Query("CREATE TABLE IF NOT EXISTS `" + Mysql.DBname + "`.`" + Mysql.TBname + "` ( `id` INT NOT NULL AUTO_INCREMENT ,`total_charge` INT(64) NOT NULL , `today_charge` INT(64) NOT NULL, `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;")
+	if err != nil {
 		panic(err.Error())
 	}
 	defer stmtIns.Close()
 }
 
 //InsertTodayCharge 插入当天消耗
-func (t *SQL)InsertTodayCharge(totalCharge,todayCharge int){
-	sqlml := "INSERT INTO `"+t.TBname+"` (`id`, `total_charge`, `today_charge`) VALUES ('"+time.Now().Format("20060102")+"', '"+strconv.Itoa(totalCharge)+"', '"+strconv.Itoa(todayCharge)+"');"
+func (t *SQL) InsertTodayCharge(totalCharge, todayCharge int) {
+	sqlml := "INSERT INTO `" + t.TBname + "` (`id`, `total_charge`, `today_charge`) VALUES ('" + time.Now().Format("20060102") + "', '" + strconv.Itoa(totalCharge) + "', '" + strconv.Itoa(todayCharge) + "');"
 	//fmt.Println(sqlml)
 	stmtOut, err := t.Conn.Query(sqlml)
 	if err != nil {
@@ -61,8 +67,8 @@ func (t *SQL)InsertTodayCharge(totalCharge,todayCharge int){
 }
 
 //UpdataTodayCharge 更新当天消耗
-func (t *SQL)UpdataTodayCharge(totalCharge,todayCharge int){
-	sqlml := "UPDATE `"+t.TBname+"` SET `total_charge` = '"+strconv.Itoa(totalCharge)+"', `today_charge` = '"+strconv.Itoa(todayCharge)+"' WHERE `id` = '"+time.Now().Format("20060102")+"';"
+func (t *SQL) UpdataTodayCharge(totalCharge, todayCharge int) {
+	sqlml := "UPDATE `" + t.TBname + "` SET `total_charge` = '" + strconv.Itoa(totalCharge) + "', `today_charge` = '" + strconv.Itoa(todayCharge) + "' WHERE `id` = '" + time.Now().Format("20060102") + "';"
 	//fmt.Println(sqlml)
 	stmtOut, err := t.Conn.Query(sqlml)
 	if err != nil {
@@ -72,9 +78,9 @@ func (t *SQL)UpdataTodayCharge(totalCharge,todayCharge int){
 }
 
 //ReplaceTodayCharge 更新当天数据，不存在则创建
-func (t *SQL)ReplaceTodayCharge(totalCharge,todayCharge int){
+func (t *SQL) ReplaceTodayCharge(totalCharge, todayCharge int) {
 	datestr := function.GetInsertDate()
-	sqlml := "REPLACE INTO "+t.TBname+" (id,total_charge,today_charge) VALUES('"+datestr+"','"+strconv.Itoa(totalCharge)+"', '"+strconv.Itoa(todayCharge)+"');"
+	sqlml := "REPLACE INTO " + t.TBname + " (id,total_charge,today_charge) VALUES('" + datestr + "','" + strconv.Itoa(totalCharge) + "', '" + strconv.Itoa(todayCharge) + "');"
 	fmt.Println(sqlml)
 	stmtOut, err := t.Conn.Query(sqlml)
 	if err != nil {
@@ -84,8 +90,8 @@ func (t *SQL)ReplaceTodayCharge(totalCharge,todayCharge int){
 }
 
 //ReadYesterdayCharge 获取前一天的消耗
-func (t *SQL)ReadYesterdayCharge() int {
-	sqlml := "SELECT total_charge FROM `"+t.TBname+"` WHERE `id` = '"+function.GetYesterdaydate()+"' LIMIT 1"
+func (t *SQL) ReadYesterdayCharge() int {
+	sqlml := "SELECT total_charge FROM `" + t.TBname + "` WHERE `id` = '" + function.GetYesterdaydate() + "' LIMIT 1"
 	//fmt.Println(sqlml)
 	rows, err := t.Conn.Query(sqlml)
 	if err != nil {
@@ -136,6 +142,6 @@ func (t *SQL)ReadYesterdayCharge() int {
 		panic(err.Error()) // proper error handling instead of panic in your app
 	}
 	//fmt.Println(value)
-	charge,_:=strconv.Atoi(value)
+	charge, _ := strconv.Atoi(value)
 	return charge
 }
