@@ -2,7 +2,7 @@ package server
 
 import (
 	"fmt"
-	"popindata/mysqlDB"
+	"popindata/mysqldb"
 	"popindata/popin"
 	"time"
 )
@@ -14,10 +14,10 @@ var t time.Duration = 300
 func TimingMoney() {
 	for {
 		//开始更新
-		yestM := mysqlDB.Mysql.ReadYesterdayCharge()
+		yestM := mysqldb.Mysql.ReadYesterdayCharge()
 		nowM := popin.Popin.GetAllMoney()
 		charge := nowM - yestM
-		mysqlDB.Mysql.ReplaceTodayCharge(nowM, charge)
+		mysqldb.Mysql.ReplaceTodayCharge(nowM, charge)
 		fmt.Printf("yestM:%d,nowM:%d", yestM, nowM)
 		<-time.NewTimer(time.Second * t).C
 	}
