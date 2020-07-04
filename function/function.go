@@ -86,17 +86,27 @@ func GetInsertDate() string {
 	if intervalNumber > 5430 {
 		//如果大于09:30，返回今天日期
 		return timeStr
-	}else{
-		//如果小于09:30,返回昨天日期
-		return GetYesterdaydate()
 	}
+	//如果小于09:30,返回昨天日期
+	return GetYesterdaydate()
+
 }
 
-//GetYesterdaydate 获取昨天日期
-func GetYesterdaydate() string{
+//GetYesterdaydate 常规---获取昨天日期
+func GetYesterdaydate() string {
 	now := time.Now()
 	d, _ := time.ParseDuration("-24h")
 	dres := now.Add(d)
+	yesterday := dres.Format("20060102")
+	return yesterday
+}
+
+//GetlastDate 逻辑---获取昨天日期
+func GetlastDate() string {
+	strdate := GetInsertDate()
+	t, _ := time.Parse("20060102", strdate)
+	d, _ := time.ParseDuration("-24h")
+	dres := t.Add(d)
 	yesterday := dres.Format("20060102")
 	return yesterday
 }
